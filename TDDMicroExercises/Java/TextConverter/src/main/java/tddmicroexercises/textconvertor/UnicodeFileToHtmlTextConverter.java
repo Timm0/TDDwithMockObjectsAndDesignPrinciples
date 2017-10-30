@@ -3,6 +3,7 @@ package tddmicroexercises.textconvertor;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -17,19 +18,32 @@ public class UnicodeFileToHtmlTextConverter
 
     public String convertToHtml() throws IOException
     {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fullFilenameWithPath)))
+        try (BufferedReader reader = generateFileStream())
         {
 
             String line = reader.readLine();
             String html = "";
             while (line != null)
             {
-                html += StringEscapeUtils.escapeHtml4(line);
-                html += "<br />";
+                html = addLineBreak(line, html);
                 line = reader.readLine();
             }
             return html;
 
         }
+    }
+
+    protected String addLineBreak(String line, String html) {
+        html += StringEscapeUtils.escapeHtml4(line);
+        html += "<br />";
+        return html;
+    }
+
+    protected BufferedReader generateFileStream () throws FileNotFoundException {
+        return new BufferedReader(new FileReader(getFullFilenameWithPath()));
+    }
+
+    protected String getFullFilenameWithPath() {
+        return fullFilenameWithPath;
     }
 }
